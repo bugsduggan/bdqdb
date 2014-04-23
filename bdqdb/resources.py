@@ -15,7 +15,8 @@ class Tag(Resource):
     def get(self, tag):
         t = models.Tag.query.filter_by(name=tag).first()
         if t is None:
-	    abort(404)
+            msg = 'Tag %s not found' % tag
+	    abort(404, message=msg)
 
         return [q.to_json() for q in t.quotes]
 
@@ -42,18 +43,21 @@ class TagWithId(Resource):
     def get(self, tag, qid):
 	t = models.Tag.query.filter_by(name=tag).first()
         if t is None:
-            abort(404)
+            msg = 'Tag %s not found' % tag
+            abort(404, message=msg)
 
         for q in t.quotes:
             if q.id_within_tag == qid:
                 return q.to_json()
 
-        abort(404)
+        msg = 'No quote with id %d found for tag %s' % (qid, tag)
+        abort(404, message=msg)
 
     def delete(self, tag, qid):
         t = models.Tag.query.filter_by(name=tag).first()
         if t is None:
-            abort(404)
+            msg = 'Tag %s not found' % tag
+            abort(404, message=msg)
 
         for q in t.quotes:
             if q.id_within_tag == qid:
@@ -63,7 +67,8 @@ class TagWithId(Resource):
                 db.session.commit()
                 return
 
-        abort(404)
+        msg = 'No quote with id %d found for tag %s' % (qid, tag)
+        abort(404, message=msg)
 
 
 api.add_resource(Root, '/')
