@@ -42,7 +42,7 @@ the search string.
 ]
 ```
 
-### GET /v1/<name>
+### GET /v1/:name
 
 * __search__ - A URL encoded string, matched exactly
 
@@ -50,9 +50,9 @@ Returns all quotes stored under a particular name. If search is specified,
 returns all quotes that contain the search string. If there are no quotes
 stored under that name, returns 404.
 
-### POST /v1/<name>
+### POST /v1/:name
 
-Adds a new quote under `<name>`. Returns 201 if successful. If no `text` attribute
+Adds a new quote under `:name`. Returns 201 if successful. If no `text` attribute
 can be found, returns 400.
 
 #### Example request
@@ -61,12 +61,12 @@ can be found, returns 400.
 {"text": "Mary had a little lamb"}
 ```
 
-### GET /v1/<name>/<id>
+### GET /v1/:name/:id
 
-Returns a single quote from `<name>` with `<id>`. If there is no quote under
-`<name>` with `<id>`, returns 404.
+Returns a single quote from `:name` with `:id`. If there is no quote under
+`:name` with `:id`, returns 404.
 
-### DELETE /v1/<name>/<id>
+### DELETE /v1/:name/:id
 
-Deletes a quote from `<name>` with `<id>`. If there is no quote under `<name>`
-with `<id>`, returns 404.
+Deletes a quote from `:name` with `:id`. If there is no quote under `:name`
+with `:id`, returns 404.
