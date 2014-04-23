@@ -7,7 +7,14 @@ from bdqdb import api, db, models
 class Root(Resource):
 
     def get(self):
-        return [t.to_json() for t in models.Tag.query.all()]
+        def remove_empty(tag):
+            if len(tag['quotes']) == 0:
+                return False
+            return True
+
+        search = request.args.get('search', None)
+        tags = [t.to_json(search=search) for t in models.Tag.query.all()]
+        return filter(remove_empty, tags)
 
 
 class Tag(Resource):
@@ -18,7 +25,12 @@ class Tag(Resource):
             msg = 'Tag %s not found' % tag
 	    abort(404, message=msg)
 
-        return [q.to_json() for q in t.quotes]
+        search = request.args.get('search', None)
+        if search is None:
+            return [q.to_json() for q in t.quotes]
+        else:
+            search_query = models.Quote.query.whoosh_search('"%s"' % search)
+            return [q.to_json() for q in t.quotes.intersect(search_query).all()]
 
     def post(self, tag):
         payload = request.get_json()

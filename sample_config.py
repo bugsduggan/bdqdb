@@ -9,3 +9,5 @@ SQLALCHEMY_DATABASE_ENGINE = 'sqlite'
 SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_ENGINE + ':///' + os.path.join(basedir,
                                                                              'bdqdb.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
+
+WHOOSH_BASE = os.path.join(basedir, 'search.db')
