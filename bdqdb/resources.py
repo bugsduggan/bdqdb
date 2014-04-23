@@ -45,7 +45,7 @@ class TagWithId(Resource):
             abort(404)
 
         for q in t.quotes:
-            if q.id == qid:
+            if q.id_within_tag == qid:
                 return q.to_json()
 
         abort(404)
@@ -56,7 +56,7 @@ class TagWithId(Resource):
             abort(404)
 
         for q in t.quotes:
-            if q.id == qid:
+            if q.id_within_tag == qid:
                 db.session.delete(q)
                 if t.quotes.count() == 1:
                     db.session.delete(t)
