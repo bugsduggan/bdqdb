@@ -8,9 +8,7 @@ class Root(Resource):
 
     def get(self):
         def remove_empty(tag):
-            if len(tag['quotes']) == 0:
-                return False
-            return True
+            return len(tag['quotes']) != 0
 
         search = request.args.get('search', None)
         tags = [t.to_json(search=search) for t in models.Tag.query.all()]
