@@ -1,5 +1,7 @@
+from random import choice
+
 from flask import request
-from flask.ext.restful import abort, Resource
+from flask.ext.restful import abort, reqparse, Resource
 
 from bdqdb import api, db, models
 
@@ -10,9 +12,26 @@ class Root(Resource):
         def remove_empty(tag):
             return len(tag['quotes']) != 0
 
-        search = request.args.get('search', None)
-        tags = [t.to_json(search=search) for t in models.Tag.query.all()]
-        return filter(remove_empty, tags)
+        parser = reqparse.RequestParser()
+        parser.add_argument('search', type=str, default=None,
+                            location='args')
+        parser.add_argument('random', type=bool, default=False,
+                            location='args')
+        args = parser.parse_args()
+
+        tags = [t.to_json(search=args.search) for t in models.Tag.query.all()]
+        tags = filter(remove_empty, tags)
+
+        if len(tags) == 0:
+            return tags
+
+        if args.random:
+            tag = choice(tags)
+            while len(tag['quotes']) > 1:
+                tag['quotes'].remove(choice(tag['quotes']))
+            return tag
+        else:
+            return tags
 
 
 class Tag(Resource):
@@ -23,12 +42,26 @@ class Tag(Resource):
             msg = 'Tag %s not found' % tag
 	    abort(404, message=msg)
 
-        search = request.args.get('search', None)
-        if search is None:
-            return [q.to_json() for q in t.quotes]
+        parser = reqparse.RequestParser()
+        parser.add_argument('search', type=str, default=None,
+                            location='args')
+        parser.add_argument('random', type=bool, default=False,
+                            location='args')
+        args = parser.parse_args()
+
+        if args.search is None:
+            quotes = [q.to_json() for q in t.quotes]
         else:
-            search_query = models.Quote.query.whoosh_search('"%s"' % search)
-            return [q.to_json() for q in t.quotes.intersect(search_query).all()]
+            search_query = models.Quote.query.whoosh_search('"%s"' % args.search)
+            quotes = [q.to_json() for q in t.quotes.intersect(search_query).all()]
+
+        if len(quotes) == 0:
+            return quotes
+
+        if args.random:
+            return choice(quotes)
+        else:
+            return quotes
 
     def post(self, tag):
         payload = request.get_json()

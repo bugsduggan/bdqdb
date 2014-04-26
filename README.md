@@ -9,9 +9,11 @@ Yes, it's a silly name but it's also a pallindrome and I find that pleasing.
 ### GET /v1/
 
 * __search__ - A URL encoded string, matched exactly
+* __random__ - Accepts any input
 
 Returns all quotes. If search is specified, returns all quotes that contain
-the search string.
+the search string. If random is specified, returns a single quote selected
+at random.
 
 #### Example response
 
@@ -45,9 +47,11 @@ the search string.
 ### GET /v1/:name
 
 * __search__ - A URL encoded string, matched exactly
+* __random__ - Accepts any input
 
 Returns all quotes stored under a particular name. If search is specified,
-returns all quotes that contain the search string. If there are no quotes
+returns all quotes that contain the search string. If random is specified,
+returns a single quote selected at random. If there are no quotes
 stored under that name, returns 404.
 
 ### POST /v1/:name
